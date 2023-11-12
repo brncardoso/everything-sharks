@@ -1,14 +1,23 @@
-FROM node:10-alpine
-
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+FROM node:16-slim as BUILDER 
+LABEL maintainer="Bruno"
 
 WORKDIR /home/node/app
 
+# Install app dependencies
 COPY package*.json ./
+RUN npm install
+
+COPY . ./
+
+FROM node:10-alpine
+
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+
+COPY --from=BUILDER /home/node/app/ ./
+
+WORKDIR /home/node/app
 
 USER node
-
-RUN npm install
 
 COPY --chown=node:node . .
 
