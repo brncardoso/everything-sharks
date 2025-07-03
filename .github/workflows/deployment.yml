@@ -29,12 +29,14 @@ jobs:
     environment: test
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - run: docker build -t setup-nodejs .
-      - run: echo "Deploy"
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sharks:test .
+      - name: Push image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/sharks:test
+      
+      
   deploy-production:
     needs: test-ci
     if: github.ref == 'refs/heads/main'
@@ -43,9 +45,9 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - run: docker build -t setup-nodejs .
-      - run: echo "Deploy"
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sharks:latest .
+      - name: Push image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/sharks:latest
