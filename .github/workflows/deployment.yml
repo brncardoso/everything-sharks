@@ -7,7 +7,7 @@ on:
 
 jobs:
   test-ci:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -24,28 +24,49 @@ jobs:
   deploy-test:
     needs: test-ci
     if: github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     concurrency: deploy-to-test
     environment: test
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          node-version: 16.x
-      - run: docker build -t setup-nodejs .
-      - run: echo "Deploy"
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sharks:test
+  
   deploy-production:
     needs: test-ci
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     concurrency: deploy-to-production
     environment: production
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          node-version: 16.x
-      - run: docker build -t setup-nodejs .
-      - run: echo "Deploy"
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sharks:latest
