@@ -44,7 +44,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/sharks:test
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sharks:test
   
   deploy-production:
     needs: test-ci
@@ -69,4 +69,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/sharks:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sharks:latest
