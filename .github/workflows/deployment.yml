@@ -7,7 +7,7 @@ on:
 
 jobs:
   test-ci:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -24,7 +24,7 @@ jobs:
   deploy-test:
     needs: test-ci
     if: github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     concurrency: deploy-to-test
     environment: test
     steps:
@@ -38,7 +38,7 @@ jobs:
   deploy-production:
     needs: test-ci
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     concurrency: deploy-to-production
     environment: production
     steps:
