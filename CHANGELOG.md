@@ -10,8 +10,15 @@
 - github actions CI/CD 
 
 
+### Entrada 
+- entrada1
+- entrada2
+
+=======
+
 ## [2025-07-03] version 1.0.1
 
 ### Added
 
 - github actions CI/CD com deploy dockerhub
+
